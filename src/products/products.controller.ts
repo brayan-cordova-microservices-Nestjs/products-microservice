@@ -15,26 +15,31 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  // create product
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
+  // find All products
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
+  // find One product by ID
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
 
+  // update product (PATCH)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(+id, updateProductDto);
   }
 
+  // delete product
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
