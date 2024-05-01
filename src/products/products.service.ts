@@ -2,6 +2,9 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const colors = require('colors');
+import { envs } from '../config';
 
 @Injectable()
 export class ProductsService extends PrismaClient implements OnModuleInit {
@@ -9,7 +12,9 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   private readonly logger = new Logger('Products-Service');
   onModuleInit() {
     this.$connect();
-    this.logger.log(`SQLite DATABASE CONNECTED using Prisma`);
+    this.logger.log(
+      `${colors.black.bgWhite(envs.typeOfDatabase)} ${colors.white('DATABASE CONNECTED')} ${colors.green('Successfully using')} ${colors.white(envs.typeOfOrm)}`,
+    );
   }
   // create product
   create(createProductDto: CreateProductDto) {
