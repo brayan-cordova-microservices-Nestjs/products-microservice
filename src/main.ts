@@ -22,9 +22,7 @@ async function bootstrap() {
   await app.listen(envs.port);
 
   logger.log(
-    `${colors.white('Products-Microservice')} 
-    ${colors.green('running on port:')} 
-    ${colors.black.bgWhite('' + envs.port)}`,
+    `${colors.white('Products-Microservice')} ${colors.green('running on port:')} ${colors.black.bgWhite(envs.port.toString())}`,
   );
 }
 bootstrap();
