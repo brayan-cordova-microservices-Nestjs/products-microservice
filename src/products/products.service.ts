@@ -16,9 +16,12 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
       `${colors.black.bgWhite(envs.typeOfDatabase)} ${colors.white('DATABASE CONNECTED')} ${colors.green('Successfully using')} ${colors.white(envs.typeOfOrm)}`,
     );
   }
-  // create product
+
+  // create a product
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    return this.product.create({
+      data: createProductDto,
+    });
   }
 
   // find All products
