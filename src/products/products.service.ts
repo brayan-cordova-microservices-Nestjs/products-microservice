@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   OnModuleInit,
@@ -70,15 +71,29 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with ID-${id}, Not Found`);
+      throw new NotFoundException(`Product with ID-${id}, Not Found...!!!`);
     }
 
     return product;
   }
 
   // update product (PATCH)
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    try {
+      const updatedProduct = await this.product.update({
+        where: { id },
+        data: updateProductDto,
+      });
+      return updatedProduct;
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Product with ID-${id}, Not Found...!!!`);
+      } else {
+        throw new InternalServerErrorException(
+          'Failed to update product due to an unexpected error.',
+        );
+      }
+    }
   }
 
   // delete product
