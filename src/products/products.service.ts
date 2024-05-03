@@ -11,6 +11,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
 import { envs } from '../config';
 import { PaginationDto } from 'src/common';
+import { Product } from './entities/product.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('colors');
@@ -96,6 +97,19 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
       }
     }
   }
+
+  // delete product
+  // async remove(id: number) {
+  //   await this.findOne(id)
+
+  //   const product = await this.product.update({
+  //     where: { id },
+  //     data: { available: false },
+  //   });
+
+  //   return product;
+  //   }
+  // }
 
   // delete product (SOFT DELETE USING COLUMN AVAILABLE)
   async remove(id: number) {
