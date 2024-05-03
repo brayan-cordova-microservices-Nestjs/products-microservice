@@ -97,7 +97,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  // delete product (SOFT DELETE WITH NOT AVAILABLE)
+  // delete product (SOFT DELETE USING COLUMN AVAILABLE)
   async remove(id: number) {
     try {
       // available : 1 = true, 0 = false.
