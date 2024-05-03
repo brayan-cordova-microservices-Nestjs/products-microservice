@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   Injectable,
   Logger,
-  NotFoundException,
   OnModuleInit,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -42,9 +42,9 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     const lastPage = Math.ceil(totalPages / limit);
 
     // Check if the requested page exceeds the total number of pages
-    if (page > lastPage) {
-      throw new NotFoundException(
-        `The requested page ${page} exceeds the total available pages ${lastPage}.`,
+    if (page > lastPage || page < 1) {
+      throw new BadRequestException(
+        `Invalid Page Number!! Page ${page} is out of bounds. Please provide a page number between 1 and ${lastPage}.`,
       );
     }
 
@@ -63,8 +63,10 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   }
 
   // find One product by ID
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    const product = this.product.findFirst({
+      where: { id },
+    });
   }
 
   // update product (PATCH)
