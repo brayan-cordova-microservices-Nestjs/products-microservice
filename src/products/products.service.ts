@@ -11,7 +11,6 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
 import { envs } from '../config';
 import { PaginationDto } from 'src/common';
-import { Product } from './entities/product.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('colors');
