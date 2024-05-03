@@ -40,7 +40,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     const { page, limit } = paginationDto;
 
     // Total Pages
-    const totalPages = await this.product.count();
+    const totalPages = await this.product.count({ where: { available: true } });
     const lastPage = Math.ceil(totalPages / limit);
 
     // Check if the requested page exceeds the total number of pages
@@ -55,6 +55,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
         // first page or first position is 0
         skip: (page - 1) * limit,
         take: limit,
+        where: { available: true },
       }),
       meta: {
         totalPages: totalPages,
@@ -67,7 +68,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   // find One product by ID
   async findOne(id: number) {
     const product = await this.product.findFirst({
-      where: { id },
+      where: { id, available: true },
     });
 
     if (!product) {
@@ -81,7 +82,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   async update(id: number, updateProductDto: UpdateProductDto) {
     try {
       const updatedProduct = await this.product.update({
-        where: { id },
+        where: { id, available: true },
         data: updateProductDto,
       });
       return updatedProduct;
@@ -96,8 +97,36 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  // delete product
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  // delete product (SOFT DELETE WITH NOT AVAILABLE)
+  async remove(id: number) {
+    try {
+      // available : 1 = true, 0 = false.
+      const product = await this.product.findUnique({
+        where: { id },
+        select: { available: true },
+      });
+
+      // First check if the product was found
+      if (!product) {
+        throw new NotFoundException(`Product with ID-${id}, Not Found...!!!`);
+      }
+
+      // Mark the product as unavailable.
+      const deletedProduct = await this.product.update({
+        where: { id },
+        data: { available: false },
+      });
+
+      return deletedProduct;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        // Unexpected errors
+        throw error;
+      } else {
+        throw new InternalServerErrorException(
+          'Failed to delete product due to an unexpected error.',
+        );
+      }
+    }
   }
 }
