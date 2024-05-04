@@ -1,5 +1,9 @@
 # Products Microservice
 
+Microservice to manage products.
+
+Using as transport TCP
+
 ## Develop Mode
 
 1. Clone repository
@@ -7,6 +11,7 @@
 3. Create an `.env` file based on `.env.template`
 4. Run prisma migration with the command `npx prisma migrate dev` and if you want to add a column type `npx prisma migrate dev --name (name it)`
 5. Then execute the command `npm run start:dev` on your terminal to run the server in development mode
+6. This Products Microservice is running on port `3001`
 
 ## INFORMATION MICROSERVICES-NESTJS
 

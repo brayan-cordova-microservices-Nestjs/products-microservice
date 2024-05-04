@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
   OnModuleInit,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -11,6 +10,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
 import { envs } from '../config';
 import { PaginationDto } from 'src/common';
+import { RpcException } from '@nestjs/microservices';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('colors');
@@ -72,7 +72,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with ID-${id}, Not Found...!!!`);
+      throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
     }
 
     return product;
@@ -91,7 +91,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
       return updatedProduct;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException(`Product with ID-${id}, Not Found...!!!`);
+        throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
       } else {
         throw new InternalServerErrorException(
           'Failed to update product due to an unexpected error.',
@@ -124,7 +124,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
       // First check if the product was found
       if (!product) {
-        throw new NotFoundException(`Product with ID-${id}, Not Found...!!!`);
+        throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
       }
 
       // Mark the product as unavailable.
@@ -135,7 +135,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
       return deletedProduct;
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof RpcException) {
         // Unexpected errors
         throw error;
       } else {
