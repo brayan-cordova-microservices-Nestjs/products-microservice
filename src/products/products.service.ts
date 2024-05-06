@@ -2,7 +2,6 @@ import {
   BadRequestException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
