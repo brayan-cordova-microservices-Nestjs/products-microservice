@@ -87,31 +87,45 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: __, ...data } = updateProductDto;
 
-    try {
-      const updatedProduct = await this.product.update({
-        where: { id, available: true },
-        data: data,
-      });
-      return updatedProduct;
-    } catch (error) {
-      if (error.code === 'P2025') {
-        throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
-      } else {
-        throw new InternalServerErrorException(
-          'Failed to update product due to an unexpected error.',
-        );
-      }
-    }
+    await this.findOne(id);
+
+    return this.product.update({
+      where: { id },
+      data: data,
+    });
+
+    // try {
+    //   const updatedProduct = await this.product.update({
+    //     where: { id, available: true },
+    //     data: data,
+    //   });
+    //   return updatedProduct;
+    // } catch (error) {
+    //   if (error.code === 'P2025') {
+    //     throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
+    //   } else {
+    //     throw new InternalServerErrorException(
+    //       'Failed to update product due to an unexpected error.',
+    //     );
+    //   }
+    // }
   }
 
-  // delete product
+  // delete product (HARD DELETE)
   // async remove(id: number) {
+
   //   await this.findOne(id)
 
-  //   const product = await this.product.update({
-  //     where: { id },
-  //     data: { available: false },
-  //   });
+  //    return this.product.delete({
+  //    where: { id }
+  //    });
+
+  // product = await this.product.update({
+  //   where: { id },
+  //   data: {
+  //     available: false,
+  //   },
+  // });
 
   //   return product;
   //   }
@@ -119,34 +133,42 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
   // delete product (SOFT DELETE USING COLUMN AVAILABLE)
   async remove(id: number) {
-    try {
-      // available : 1 = true, 0 = false.
-      const product = await this.product.findUnique({
-        where: { id },
-        select: { available: true },
-      });
+    await this.findOne(id);
 
-      // First check if the product was found
-      if (!product) {
-        throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
-      }
+    const product = await this.product.update({
+      where: { id },
+      data: {
+        available: false,
+      },
+    });
 
-      // Mark the product as unavailable.
-      const deletedProduct = await this.product.update({
-        where: { id },
-        data: { available: false },
-      });
+    return product;
 
-      return deletedProduct;
-    } catch (error) {
-      if (error instanceof RpcException) {
-        // Unexpected errors
-        throw error;
-      } else {
-        throw new InternalServerErrorException(
-          'Failed to delete product due to an unexpected error.',
-        );
-      }
-    }
+    // try {
+    //   // available : 1 = true, 0 = false.
+    //   const product = await this.product.findUnique({
+    //     where: { id },
+    //     select: { available: true },
+    //   });
+    //   // First check if the product was found
+    //   if (!product) {
+    //     throw new RpcException(`Product with ID-${id}, Not Found...!!!`);
+    //   }
+    //   // Mark the product as unavailable.
+    //   const deletedProduct = await this.product.update({
+    //     where: { id },
+    //     data: { available: false },
+    //   });
+    //   return deletedProduct;
+    // } catch (error) {
+    //   if (error instanceof RpcException) {
+    //     // Unexpected errors
+    //     throw error;
+    //   } else {
+    //     throw new InternalServerErrorException(
+    //       'Failed to delete product due to an unexpected error.',
+    //     );
+    //   }
+    // }
   }
 }
