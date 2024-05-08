@@ -19,6 +19,7 @@ const colors = require('colors');
 export class ProductsService extends PrismaClient implements OnModuleInit {
   // logger
   private readonly logger = new Logger('Products-Service');
+
   onModuleInit() {
     this.$connect();
     this.logger.log(
@@ -27,14 +28,14 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   }
 
   // create a product
-  create(createProductDto: CreateProductDto) {
+  createProduct(createProductDto: CreateProductDto) {
     return this.product.create({
       data: createProductDto,
     });
   }
 
   // find All products
-  async findAll(paginationDto: PaginationDto) {
+  async findAllProducts(paginationDto: PaginationDto) {
     // Pagination using Prisma
 
     const { page, limit } = paginationDto;
@@ -66,7 +67,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   }
 
   // find One product by ID
-  async findOne(id: number) {
+  async findOneProduct(id: number) {
     const product = await this.product.findFirst({
       where: { id, available: true },
     });
@@ -82,11 +83,11 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   }
 
   // update product (PATCH)
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async updateProduct(id: number, updateProductDto: UpdateProductDto) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: __, ...data } = updateProductDto;
 
-    await this.findOne(id);
+    await this.findOneProduct(id);
 
     return this.product.update({
       where: { id },
@@ -131,8 +132,8 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   // }
 
   // delete product (SOFT DELETE USING COLUMN AVAILABLE)
-  async remove(id: number) {
-    await this.findOne(id);
+  async removeProduct(id: number) {
+    await this.findOneProduct(id);
 
     const product = await this.product.update({
       where: { id },
