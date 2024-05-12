@@ -38,10 +38,13 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   async findAllProducts(paginationDto: PaginationDto) {
     // Pagination using Prisma
 
+    // Page & Limit
     const { page, limit } = paginationDto;
 
     // Total Pages
     const totalPages = await this.product.count({ where: { available: true } });
+
+    // Last Pages
     const lastPage = Math.ceil(totalPages / limit);
 
     // Check if the requested page exceeds the total number of pages
@@ -170,5 +173,28 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     //     );
     //   }
     // }
+  }
+
+  // Validate if product exists
+  async validateProduct(ids: number[]) {
+    ids = Array.from(new Set(ids)); //Set is a type of data structure in javascript without duplicates.
+
+    const products = await this.product.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // verify if all ids exist
+    if (products.length !== ids.length) {
+      throw new RpcException({
+        message: 'Some products were Not Found...!!!',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+
+    return products;
   }
 }
