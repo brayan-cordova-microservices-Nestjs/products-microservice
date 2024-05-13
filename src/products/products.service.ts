@@ -20,8 +20,9 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   // logger
   private readonly logger = new Logger('Products-Service');
 
-  onModuleInit() {
-    this.$connect();
+  // logger display
+  async onModuleInit() {
+    await this.$connect();
     this.logger.log(
       `${colors.black.bgWhite(envs.typeOfDatabase)} ${colors.white('DATABASE CONNECTED')} ${colors.green('Successfully using')} ${colors.white(envs.typeOfOrm)}`,
     );
