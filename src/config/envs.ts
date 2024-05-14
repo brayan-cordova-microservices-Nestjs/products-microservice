@@ -13,6 +13,9 @@ interface EnvVars {
   // Type of database
   TYPE_OF_DATABASE: string;
   TYPE_OF_ORM: string;
+
+  // NATS Servers
+  NATS_SERVERS: string[];
 }
 
 // validation by scheme using joi
@@ -24,10 +27,15 @@ const envsSchema = joi
 
     TYPE_OF_DATABASE: joi.string().required(),
     TYPE_OF_ORM: joi.string().required(),
+
+    NATS_SERVERS: joi.array().items(joi.string()).required(),
   })
   .unknown(true);
 
-const { error, value } = envsSchema.validate(process.env);
+const { error, value } = envsSchema.validate({
+  ...process.env,
+  NATS_SERVERS: process.env.NATS_SERVERS?.split(','),
+});
 
 if (error) {
   throw new Error(`Config validation error: ${error.message}`);
@@ -42,4 +50,6 @@ export const envs = {
 
   typeOfDatabase: envVars.TYPE_OF_DATABASE,
   typeOfOrm: envVars.TYPE_OF_ORM,
+
+  natsServers: envVars.NATS_SERVERS,
 };
