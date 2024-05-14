@@ -11,7 +11,8 @@ Using as transport TCP
 3. Create an `.env` file based on `.env.template`
 4. Run prisma migration with the command `npx prisma migrate dev` and if you want to add a column type `npx prisma migrate dev --name (name it)`
 5. Then execute the command `npm run start:dev` on your terminal to run the server in development mode
-6. This Products Microservice is running on port `3001`
+6. NATS server up `docker run -d --name nats-server -p 4222:4222 -p 8222:8222 nats`
+7. This Products Microservice is running on port `3001`
 
 ## INFORMATION MICROSERVICES-NESTJS
 
